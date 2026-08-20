@@ -1,7 +1,8 @@
+import math
+
 def is_number(number: int | float) -> bool:
     try:
-        float(number)
-        return True
+        return math.isfinite(float(number))
     except ValueError:
         return False
 
@@ -29,8 +30,8 @@ def users_DB():
         for user in users:
             if user['username'] == username and user['password'] == password:
                 active_user = user
-            else:
-                raise ValueError("The credentials are incorrect. Please try again.")
+                return 
+        raise ValueError("The credentials are incorrect. Please try again.")
         
 
     def logout():
@@ -38,21 +39,23 @@ def users_DB():
         active_user = None
 
     def view_accounts():
-        counter = 0
+        accounts = []
         for account in active_user['accounts']:
-            counter += 1
-            return f"{counter}. {account['acct_number']}"
+            accounts.append(
+                f"1. Accont number: {account['acct_number']}\n"
+                f"2. Balance: {account['balance']}"
+            )
 
-            
+        return "\n------------------------------------\n".join(accounts)
 
     def show_balance(account_number: str) -> str:
         for account in active_user['accounts']:
             if account['acct_number']  == int(account_number):
                 return (f"Account number: {account['acct_number']}\n"
                         f"Balance: {account['balance']}") 
-            else:
-                raise ValueError("The account was not found. Please try again.")  
-       
+    
+        raise ValueError("The account was not found. Please try again.")  
+
     def make_deposit(amount: int | float, account_number: int):
         nonlocal active_user
         if is_number(amount) and is_number(account_number):
@@ -63,11 +66,10 @@ def users_DB():
                             raise ValueError("The amount cannot be lower or equal to zero.")
                         else:
                             account['balance'] += deposit_amount
-                    else:
-                        raise ValueError("The account was not found. Please try again.")
+                            return show_balance(account_number)       
+            raise ValueError("The account was not found. Please try again.")
         else:
             raise ValueError("Only numbers are allowed. Please enteder a valid amount.")
-        return show_balance(account_number)
 
     def withdraw_money(amount: int | float, account_number: int):
         nonlocal active_user
@@ -80,13 +82,11 @@ def users_DB():
                         elif deposit_amount > account['balance']:
                             raise ValueError("The amount cannot be greater than this account's current balance.")
                         else:
-                            account['balance'] -= amount
-                    else:
-                        raise ValueError("The account was not found. Please try again.")
+                            account['balance'] -= deposit_amount
+                            return show_balance(account_number)
+            raise ValueError("The account was not found. Please try again.")
         else:
             raise ValueError("Only numbers are allowed. Please enteder a valid amount.")
-        return show_balance(account_number)
-    
 
     return add_user, get_user, login, logout, show_balance, make_deposit, withdraw_money, view_accounts
 
