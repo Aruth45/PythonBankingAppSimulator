@@ -3,9 +3,18 @@ import math, random
 def is_number(*args) -> bool:
     for item in args:
         try:
-            return math.isfinite(float(item))
+            if not math.isfinite(float(item)):
+                return False
         except ValueError:
             return False
+    return True
+
+def is_account_number(*args: str) -> bool:
+    for item in args:
+        if str(item).strip().isdigit():
+            continue
+        return False
+    return True
 
 
 def users_DB():
@@ -34,7 +43,7 @@ def users_DB():
         if len(active_user['accounts']) != 0:
             for account in active_user['accounts']:
                 counter += 1
-                accounts.append(f"{counter}. {account['acct_number']}")
+                accounts.append(f"{counter}. {account['acct_number']}: ${account['balance']:.2f}")
             output = "\n".join(accounts)
             return output
         raise ValueError("You have no active accounts. Please create an account to enable this functionality.")
@@ -50,7 +59,7 @@ def users_DB():
         return output
     
     def delete_account(account_number:int) -> str:
-        if is_number(account_number):
+        if is_account_number(account_number):
             if len(active_user['accounts']) != 0:
                 for account in active_user['accounts']:
                     if account['acct_number'] == int(account_number):
@@ -63,7 +72,7 @@ def users_DB():
         raise ValueError("Only numbers are allowed. Please check the account number again.")        
         
     def show_balance(account_number: int) -> str:
-        if is_number(account_number):
+        if is_account_number(account_number):
             if len(active_user['accounts']) != 0:
                 for account in active_user['accounts']:
                     if account['acct_number'] == int(account_number):
@@ -73,7 +82,7 @@ def users_DB():
         raise ValueError("Only numbers are allowed. Please check the account number again.")
 
     def make_deposit(amount: int | float, account_number: int) -> str:
-        if is_number(amount,account_number):
+        if is_number(amount) and is_account_number(account_number):
             if len( active_user['accounts']) != 0:
                 if float(amount) > 0: 
                     for account in active_user['accounts']:
@@ -86,7 +95,7 @@ def users_DB():
         raise ValueError("Only numbers are allowed. Please check the account number again.")
 
     def withdraw_money(amount:int | float, account_number: int):
-        if is_number(amount,account_number):
+        if is_number(amount) and is_account_number(account_number):
             if len(active_user['accounts']) != 0:
                 if float(amount) > 0:
                     for account in active_user['accounts']:
@@ -103,8 +112,7 @@ def users_DB():
     def transfer_money(from_account_number: int, to_account_number: int, transfer_amount: int | float) -> str:
         from_account = None
         to_account = None
-        transfer_amount = float(transfer_amount)
-        if is_number(from_account_number,to_account_number,transfer_amount):
+        if is_number(transfer_amount) and is_account_number(from_account_number,to_account_number):
             transfer_amount = float(transfer_amount)
             if from_account_number != to_account_number:
                 if transfer_amount > 0: 
@@ -125,19 +133,15 @@ def users_DB():
                     to_account['balance'] += transfer_amount
                     return(
                         "The transaction was completed successfully.\n" 
-                        f"A debit in the amount of {transfer_amount} was made to the account: {from_account_number}.\n"
-                        f"A deposit in the amount of {transfer_amount} was made to the account: {to_account_number}"
+                        f"A debit in the amount of ${transfer_amount} was made to the account: {from_account_number}.\n"
+                        f"A deposit in the amount of ${transfer_amount} was made to the account: {to_account_number}."
                     )
 
                 raise ValueError("The transfer amount cannot be lower than zero.") 
             raise ValueError("The source account cannot be the same as the receiving account.")
-        raise ValueError("Only numbers are allowed. Please check the account number again.")
+        raise ValueError("Only numbers are allowed. Please check the account number and transfer amount again.")
         
             
-                    
-                        
-
-
         
     return add_user, login, logout, view_accounts, create_account, delete_account, show_balance, make_deposit, withdraw_money, transfer_money
 
