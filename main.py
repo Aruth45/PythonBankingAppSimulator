@@ -11,7 +11,8 @@ def main():
     delete_account, 
     show_balance, 
     make_deposit, 
-    withdraw_money) = users_DB()
+    withdraw_money,
+    transfer_money) = users_DB()
 
     is_main_running = True
 
@@ -48,7 +49,8 @@ def main():
                         "3. Withdraw money\n"
                         "4. View my accounts\n" 
                         "5. Create an account\n"
-                        "6. Delete an account\n"
+                        "6. Delete an account\n" 
+                        "7. Transfer money\n"
                         "8. Logout")              
                         print("*"*30)
                         get_loggedin_user_choice = input("Please choose an option from the menu above: ")
@@ -84,6 +86,14 @@ def main():
                                 get_account_number_delete = input("Please enter the account number you would like to delete: ")
                                 try:
                                     print(delete_account(get_account_number_delete))
+                                except ValueError as error:
+                                    print(error)
+                            case "7":
+                                get_from_account = input("Please enter the account number the funds should be taken from: ")
+                                get_to_account = input("Please enter the account number the funds should be deposited in: ")
+                                get_transfer_amount = input("Please enter the amount to transfer: ")
+                                try:
+                                    print(transfer_money(get_from_account, get_to_account, get_transfer_amount))
                                 except ValueError as error:
                                     print(error)
                             case "8":
