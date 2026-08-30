@@ -1,4 +1,16 @@
 import math, random
+import json 
+
+def load_users():
+    try:
+        with open("users.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+def save_users(users):
+    with open("users.json", "w") as file:
+        json.dump(users, file, indent=4)
 
 def is_number(*args) -> bool:
     for item in args:
@@ -18,11 +30,12 @@ def is_account_number(*args: str) -> bool:
 
 
 def users_DB():
-    users = []
+    users = load_users()
     active_user = None
 
     def add_user(user: dict):
         users.append(user)
+        save_users(users)
         return "The user was created successfully"
 
     def login(username: str, password: str):

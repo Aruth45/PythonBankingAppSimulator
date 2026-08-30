@@ -1,0 +1,12 @@
+[
+    {
+        "username": "a",
+        "password": "a",
+        "accounts": [
+            {
+                "acct_number": 877722868,
+                "balance": 0
+            }
+        ]
+    }
+]
